@@ -1,13 +1,16 @@
 // src/app/api/admin/products/[id]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-type Params = { params: { id: string } };
-
-export async function PUT(req: Request, { params }: Params) {
+export async function PUT(request: NextRequest) {
   try {
-    const id = parseInt(params.id, 10);
-    const { name, price, imageUrl } = await req.json();
+    // 1. Extract ID from the URL
+    const url = new URL(request.url);
+    const segments = url.pathname.split('/');
+    const id = parseInt(segments[segments.length - 1], 10);
+
+    // 2. Parse body
+    const { name, price, imageUrl } = await request.json();
     if (!name || price == null || !imageUrl) {
       return NextResponse.json(
         { message: 'Missing required fields (name, price, imageUrl)' },
@@ -15,10 +18,12 @@ export async function PUT(req: Request, { params }: Params) {
       );
     }
 
+    // 3. Update product
     const product = await prisma.product.update({
       where: { id },
       data: { name, price: Number(price), imageUrl },
     });
+
     return NextResponse.json({ success: true, product });
   } catch (error) {
     console.error('Error updating product:', error);
@@ -29,9 +34,14 @@ export async function PUT(req: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(_: Request, { params }: Params) {
+export async function DELETE(request: NextRequest) {
   try {
-    const id = parseInt(params.id, 10);
+    // 1. Extract ID from the URL
+    const url = new URL(request.url);
+    const segments = url.pathname.split('/');
+    const id = parseInt(segments[segments.length - 1], 10);
+
+    // 2. Delete product
     await prisma.product.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
