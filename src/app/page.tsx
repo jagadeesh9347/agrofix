@@ -70,7 +70,8 @@ export default function HomePage() {
                 <h2 className="text-lg font-semibold">{product.name}</h2>
                 <p className="text-gray-600 mb-2">₹{product.price}</p>
                 <button
-                  onClick={() => addToCart(product)}
+                  onClick={() => addToCart({ ...product, quantity: 1 })}
+
                   className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
                 >
                   Add to Cart
