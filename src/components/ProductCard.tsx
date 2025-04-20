@@ -23,7 +23,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <p className="text-gray-700">₹{product.price}</p>
       <button
         className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
-        onClick={() => addToCart(product)}
+        onClick={() => addToCart({ ...product, quantity: 1 })}
       >
         Add to Cart
       </button>
